@@ -12,9 +12,10 @@ interface ITextBoxProps {
     onDrag: (newX: number, newY: number) => void
     onResize: (newWidth: number, newHeight: number) => void;
     onTextChange: (newText: any) => void
+    isEdit: boolean;
 }
 const TextBox: React.FC<ITextBoxProps> = (props) => {
-    const { x, y, width, height, text, onDrag, onResize, onTextChange } = props;
+    const { x, y, width, height, text, onDrag, onResize, onTextChange, isEdit } = props;
     const [dragging, setDragging] = useState(false);
     const [resizing, setResizing] = useState(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -122,7 +123,7 @@ const TextBox: React.FC<ITextBoxProps> = (props) => {
                 </text>
             )}
             {/* Resize handles */}
-            <circle
+            {isEdit && <g><circle
                 cx={x + width}
                 cy={y + height / 2}
                 r="5"
@@ -164,6 +165,7 @@ const TextBox: React.FC<ITextBoxProps> = (props) => {
                 fill="blue"
                 onMouseDown={(e) => handleMouseDown(e, 'topLeft')}
             />
+            </g>}
         </g>
         </svg>
     );

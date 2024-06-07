@@ -11,10 +11,11 @@ interface IHighlightProps {
     onDrag: (newX: number, newY: number) => void
     onResize: (newWidth: number, newHeight: number) => void;
     isRectangle: boolean;
+    isEdit: boolean;
 }
 
 const Highlight: React.FC<IHighlightProps> = (props) => {
-  const { x, y, width, height, onDrag, onResize, isRectangle } =props;
+  const { x, y, width, height, onDrag, onResize, isRectangle,isEdit } =props;
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState<string | null>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -85,6 +86,7 @@ const Highlight: React.FC<IHighlightProps> = (props) => {
         onMouseDown={(e) => handleMouseDown(e, "drag")}
         r="20"
       />
+      {isEdit && <g>
       <circle
         cx={x + width}
         cy={y + height / 2}
@@ -127,6 +129,7 @@ const Highlight: React.FC<IHighlightProps> = (props) => {
         fill="blue"
         onMouseDown={(e) => handleMouseDown(e, "topLeft")}
       />
+      </g>}
     </g>
     </svg>
   );

@@ -10,11 +10,12 @@ interface ICircleProps {
     ry: number; 
     onDrag: (newX: number, newY: number) => void
     onResize: (newWidth: number, newHeight: number) => void;
+    isEdit: boolean;
 }
 
 
 const Circle: React.FC<ICircleProps> = (props) => {
-    const { cx, cy, rx, ry, onDrag, onResize } =props;
+    const { cx, cy, rx, ry, onDrag, onResize, isEdit } =props;
     const [dragging, setDragging] = useState(false);
     const [resizing, setResizing] = useState(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -87,7 +88,7 @@ const Circle: React.FC<ICircleProps> = (props) => {
                 onMouseDown={(e) => handleMouseDown(e, 'drag')}
             />
             {/* Resize handles */}
-            <circle
+            {isEdit && <g><circle
                 cx={cx + rx}
                 cy={cy}
                 r="5"
@@ -129,6 +130,8 @@ const Circle: React.FC<ICircleProps> = (props) => {
                 fill="blue"
                 onMouseDown={(e) => handleMouseDown(e, 'topLeft')}
             />
+            </g>
+}
         </g>
         </svg>
     );

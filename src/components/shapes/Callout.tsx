@@ -12,10 +12,11 @@ interface ICalloutProps {
     baseY: number;
     pointerX: number;
     pointerY: number;
+    isEdit: boolean;
 }
 
 const Callout: React.FC<ICalloutProps> = (props) => {
-    const {x, y, width, height, baseX, baseY, pointerX, pointerY} = props;
+    const {x, y, width, height, baseX, baseY, pointerX, pointerY, isEdit} = props;
   const [rect, setRect] = useState({ x: x, y: y, width: width, height: height });
   const [arrow, setArrow] = useState({
     baseX: baseX,
@@ -267,8 +268,8 @@ const updateArrowPosition = (newRect) => {
             y={rect.y}
             width={rect.width}
             height={rect.height}
-            fill="#d9d9d9"
-            stroke="#000"
+            fill="#000"
+            stroke="#fff"
             strokeWidth="2"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -276,7 +277,7 @@ const updateArrowPosition = (newRect) => {
             onMouseDown={(e) => handleMouseDown(e, "rect", "")}
             style={{ cursor: "move" }}
           />
-          {renderResizeHandles()}
+          {isEdit && renderResizeHandles()}
                       <foreignObject x={rect.x} y={rect.y} width={rect.width} height={rect.height}
             onMouseDown={(e) => handleMouseDown(e, "rect", "")}
             style={{ pointerEvents: "none" }}>
@@ -296,6 +297,8 @@ const updateArrowPosition = (newRect) => {
                   border: "none",
                   background: "transparent",
                   textAlign: "center",
+                  alignContent: "center",
+                  color: '#fff',
                 }}
               />
               </div>
@@ -309,6 +312,7 @@ const updateArrowPosition = (newRect) => {
                   alignItems: "center",
                   pointerEvents: "none",
                   userSelect: "none",
+                  color: '#fff'
                 }}
                 onDoubleClick={handleDblClick}
               >
@@ -323,7 +327,7 @@ const updateArrowPosition = (newRect) => {
             onMouseDown={(e) => handleMouseDown(e, "arrow", "")}
             style={{ cursor: "move" }}
           />
-          <circle
+          {isEdit && <circle
             cx={arrow.tipX}
             cy={arrow.tipY}
             r="8"
@@ -331,7 +335,7 @@ const updateArrowPosition = (newRect) => {
             className="resize-handle"
             onMouseDown={(e) => handleMouseDown(e, "arrow", "tip")}
             style={{ cursor: "nwse-resize" }}
-          />
+          />}
         </g>
         </svg>
         </div>

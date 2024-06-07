@@ -6,6 +6,7 @@ import TextBox from './shapes/Textbox';
 
 interface IShapeRenderProps {
     type: string | null;
+    isEdit: boolean;
 }
 
 interface IShapeType {
@@ -23,7 +24,7 @@ interface IShapeType {
 }
 
 const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
-    const {type} = props;
+    const {type, isEdit} = props;
     const [shapes, setShapes] = useState<IShapeType[]>([]);
     useEffect(()=> {
         const initialShapes = [];
@@ -112,10 +113,6 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
         setShapes(shapes.map(shape => shape.id === id ? { ...shape, text: newText } : shape));
     };
 
-    const handlePointerMove = (id: number, newPointerX: number, newPointerY: number) => {
-        setShapes(shapes.map(shape => shape.id === id ? { ...shape, pointerX: newPointerX, pointerY: newPointerY } : shape));
-    };
-
   const getShapes = (shape: IShapeType) => {
     if(shape.type === 'highlight') {
             return (
@@ -125,6 +122,7 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                isRectangle={false}
                onDrag={(newX, newY) => handleDrag(shape.id, newX, newY)}
                onResize={(newWidth, newHeight) => handleResize(shape.id, newWidth, newHeight)}
+               isEdit={isEdit}
                />
     )}
     if(shape.type === 'rectangle') {
@@ -135,6 +133,7 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                isRectangle={true}
                onDrag={(newX, newY) => handleDrag(shape.id, newX, newY)}
                onResize={(newWidth, newHeight) => handleResize(shape.id, newWidth, newHeight)}
+               isEdit={isEdit}
                />
     )}
     if(shape.type === 'circle') {
@@ -148,6 +147,7 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                ry={shape.height}
                onDrag={(newX, newY) => handleDrag(shape.id, newX, newY)}
                onResize={(newWidth, newHeight) => handleResize(shape.id, newWidth, newHeight)}
+               isEdit={isEdit}
                />
     )}
     if(shape.type === 'textbox') {
@@ -159,6 +159,7 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                     onDrag={(newX, newY) => handleDrag(shape.id, newX, newY)}
                     onResize={(newWidth, newHeight) => handleResize(shape.id, newWidth, newHeight)}
                     onTextChange={(newText) => handleTextChange(shape.id, newText)}
+                    isEdit={isEdit}
                 />
     )}
      if(shape.type === 'callout') {
@@ -170,6 +171,7 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                     baseY={shape.baseY as number}
                     pointerX={shape.pointerX as number}
                     pointerY={shape.pointerY as number}
+                    isEdit={isEdit}
                 />
     )}
   }
