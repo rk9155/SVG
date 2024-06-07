@@ -74,6 +74,8 @@ const Circle: React.FC<ICircleProps> = (props) => {
     }, [handleMouseMove]);
 
     return (
+        <svg width="100%" height="100%">
+
         <g>
             <ellipse
                 cx={cx}
@@ -128,6 +130,7 @@ const Circle: React.FC<ICircleProps> = (props) => {
                 onMouseDown={(e) => handleMouseDown(e, 'topLeft')}
             />
         </g>
+        </svg>
     );
 };
 

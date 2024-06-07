@@ -2,7 +2,6 @@ import { useState } from "react";
 import ShapeRenderer from "./ShapeRenderer";
 
 const Editor = () => {
-
 const [type, setType] = useState<string| null>(null);
   return (
     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
@@ -12,7 +11,7 @@ const [type, setType] = useState<string| null>(null);
             <button onClick={() => setType('textbox')}>Textbox</button>
             <button onClick={() => setType('rectangle')}>Rectangle</button>
             <button onClick={() => setType('circle')}>Circle</button>
-            <button>Callout</button>
+            <button onClick={() => setType('callout')}>Callout</button>
         </div>
         <div className="editor-area">
             <ShapeRenderer type={type} />

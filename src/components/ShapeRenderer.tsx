@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Callout from './shapes/Callout';
 import Circle from './shapes/Circle';
 import Highlight from './shapes/Highlight';
 import TextBox from './shapes/Textbox';
@@ -15,6 +16,10 @@ interface IShapeType {
     width: number,
     height: number,
     text?:string;
+    pointerX?:number;
+    pointerY?:number;
+    baseX?:number;
+    baseY?:number;
 }
 
 const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
@@ -49,9 +54,9 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                     id: 1,
                     type: "circle",
                     x: 300,
-                    y: 200,
-                    width: 100,
-                    height: 100,
+                    y: 300,
+                    width: 50,
+                    height: 80,
             })
             setShapes(initialShapes);
         }
@@ -64,6 +69,21 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                     width: 200,
                     height: 100,
                     text: 'Editable text',
+            })
+            setShapes(initialShapes);
+        }
+        else if(type==='callout') {
+            initialShapes.push({    
+                    id: 1,
+                    type: "callout",
+                    x: 20,
+                    y: 20,
+                    width: 240,
+                    height: 100,
+                    pointerX: 140,
+                    pointerY: 0,
+                    baseX:140,
+                    baseY:20,
             })
             setShapes(initialShapes);
         }
@@ -90,6 +110,10 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
 
    const handleTextChange = (id: number, newText: string) => {
         setShapes(shapes.map(shape => shape.id === id ? { ...shape, text: newText } : shape));
+    };
+
+    const handlePointerMove = (id: number, newPointerX: number, newPointerY: number) => {
+        setShapes(shapes.map(shape => shape.id === id ? { ...shape, pointerX: newPointerX, pointerY: newPointerY } : shape));
     };
 
   const getShapes = (shape: IShapeType) => {
@@ -137,15 +161,24 @@ const ShapeRenderer: React.FC<IShapeRenderProps> = (props) => {
                     onTextChange={(newText) => handleTextChange(shape.id, newText)}
                 />
     )}
+     if(shape.type === 'callout') {
+            return (
+                <Callout
+                    key={shape.id}
+                    {...shape}
+                    baseX={shape.baseX as number}
+                    baseY={shape.baseY as number}
+                    pointerX={shape.pointerX as number}
+                    pointerY={shape.pointerY as number}
+                />
+    )}
   }
 
   return (
     <div style={{zIndex: 5, width: '100%', height: '100%'}}>
-      <svg width="100%" height="100%">
        { shapes.map((shape) => (
           getShapes(shape)
         ))}
-      </svg>
     </div>
   );
 };

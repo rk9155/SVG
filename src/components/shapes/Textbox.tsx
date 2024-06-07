@@ -87,6 +87,8 @@ const TextBox: React.FC<ITextBoxProps> = (props) => {
     }, [handleMouseMove]);
 
     return (
+        <svg width="100%" height="100%">
+
         <g>
             <rect
                 x={x}
@@ -163,6 +165,7 @@ const TextBox: React.FC<ITextBoxProps> = (props) => {
                 onMouseDown={(e) => handleMouseDown(e, 'topLeft')}
             />
         </g>
+        </svg>
     );
 };
 

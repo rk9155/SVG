@@ -74,6 +74,8 @@ const Highlight: React.FC<IHighlightProps> = (props) => {
   }, [handleMouseMove]);
 
   return (
+    <svg width="100%" height="100%">
+
     <g>
       <path
         d={`M${x},${y} h${width} v${height} h-${width} Z`}
@@ -126,6 +128,7 @@ const Highlight: React.FC<IHighlightProps> = (props) => {
         onMouseDown={(e) => handleMouseDown(e, "topLeft")}
       />
     </g>
+    </svg>
   );
 };
 
