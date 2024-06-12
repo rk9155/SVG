@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as fabric from "fabric";
 import { useEffect, useRef } from "react";
-import GroupWithGroup from "../../utils/fabricGroup";
+import GroupWithPolygon from "../../utils/fabricPolygon";
 
 
 const FabricEditor = () => {
@@ -43,36 +43,52 @@ const FabricEditor = () => {
     }
 
      const handleAddText = () => {
+        // const rectWithText = new GroupWithText({
+        //     width: 200,
+        //     height: 100,
+        //     strokeWidth: 4,
+        //     fill: '#000',
+        //     stroke: '#000', 
+        //     lockRotation: true,
+		// 	objectCaching: true,
+		// 	noScaleCache: true,
+		// 	strokeUniform: true,
+		// 	transparentCorners: false,
+		// 	cornerColor: '#000',
+		// 	cornerStyle: 'circle',
+		// 	cornerSize: 8,
+		// 	cornerStrokeColor: '#1d7bb9',
+        // })
+        // fabricCanvas.current.add(rectWithText);
 
-     const test = new fabric.Textbox('test', {
-      width: 200,
-      height: 100,
-      fontSize: 24,
-      objectCaching: false,
-      editable: true,
-      selectable: true,
-    })
-
-    const rect = new fabric.Rect({
-            width: 200,
-            height: 100,
-            strokeWidth: 4,
-            fill: '#d9d9d9',
-            stroke: '#000', 
+        const points = [{
+            x: 0, y: 0
+        }, {
+            x: 200, y: 0
+        }, {
+            x: 200, y: 100
+        }, {
+            x: 100, y: 100
+        }, {
+            x: 120, y: 150
+        }, {
+            x: 150, y: 100
+        },{
+            x: 0, y: 100
+        }];
+        const polygon = new GroupWithPolygon(points, {
+            left: 100,
+            top: 50,
+            fill: '#D81B60',
+            scaleX: 1,
+            scaleY: 1,
             lockRotation: true,
-			objectCaching: true,
-			noScaleCache: true,
-			strokeUniform: true,
-			transparentCorners: false,
-			cornerColor: '#000',
-			cornerStyle: 'circle',
-			cornerSize: 8,
-			cornerStrokeColor: '#1d7bb9',
-        })
-
-        const rectWithText = new GroupWithGroup([rect, test]);
-        fabricCanvas.current.add(rectWithText);
-        fabricCanvas.current.renderAll();
+            objectCaching: false,
+            transparentCorners: false,
+            cornerColor: 'blue',
+        }, fabricCanvas.current);
+       fabricCanvas.current.add(polygon);
+       fabricCanvas.current.renderAll();
     }
 
   return (

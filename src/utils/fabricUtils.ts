@@ -5,6 +5,7 @@ import { classRegistry, Rect, Textbox } from 'fabric';
 export default class GroupWithText extends Rect {
   static type = 'GroupWithText';
   test: Textbox;
+  poly: fabric.Triangle;
   text = null;
   textOffsetLeft= 0;
   textOffsetTop = 0;
@@ -14,6 +15,19 @@ export default class GroupWithText extends Rect {
 
   constructor(args: any) {
     super(args);
+
+    this.poly = new fabric.Triangle({
+      fill: '#D81B60',
+      strokeWidth: 2,
+      stroke: 'green',
+      scaleX: 1,
+      scaleY: 1,
+      objectCaching: false,
+      transparentCorners: false,
+      cornerColor: 'blue',
+      top: this.top + this.height
+	})
+
     this.test = new Textbox('test', {
       width: this.width,
       height: this.height,
@@ -73,6 +87,7 @@ export default class GroupWithText extends Rect {
     this.test.width = this.width;
     this.test.height = this.height;
     this.test.render(ctx);
+    this.poly.render(ctx);
   }
 }
 

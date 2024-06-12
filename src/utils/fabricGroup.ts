@@ -3,7 +3,7 @@ import * as fabric from "fabric";
 import { classRegistry } from 'fabric';
 
 export default class GroupWithGroup extends fabric.Group {
-  static type = 'GroupWithText';
+  static type = 'GroupWithGroup';
   test: fabric.Textbox;
   rect: fabric.Rect;
   text = null;
