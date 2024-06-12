@@ -12,13 +12,26 @@ export default class GroupWithPolygon extends fabric.Polygon {
   _prevAngle = 0;
   canvas = new fabric.Canvas("c");
   initialFocused = false;
+  selected = false;
 
   constructor(...args: any) {
     super(...args);
-    this.test = new Textbox("Sample", {
+    this.test = new Textbox("", {
       fill: "#d9d9d9",
-      fontSize: 24,
+      fontSize: 18,
       objectCaching: false,
+      textAlign: "center",
+    });
+
+    document.addEventListener("keyup", (event) => {
+      if (event && this.selected) {
+        this.makeEditable();
+        this.selected = false;
+      }
+    });
+
+    this.test.on("selected", () => {
+      console.log("text added");
     });
     this.canvas = args.canvas;
 
@@ -46,6 +59,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
     this.on("deselected", () => {
       this.canvas.preserveObjectStacking = this._prevObjectStacking;
+      this.selected = false;
+    });
+
+    this.on("selected", () => {
+      this.selected = true;
     });
 
     this.test.on("editing:exited", () => {
@@ -53,6 +71,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
       this.test.evented = false;
       this.selectable = true;
     });
+
+    // this.on("scaling", () => {
+    //   this.test.width = this.points[0].x * this.scaleX;
+    //   this.test.height = (this.points[2].y - this.points[1].y) * this.scaleY;
+    // });
   }
 
   makeEditable = () => {
@@ -76,8 +99,21 @@ export default class GroupWithPolygon extends fabric.Polygon {
       actionName: "modifyPolygon",
       pointIndex: 4,
       positionHandler: this.polygonPositionHandler.bind(this, 4),
+      render: function (ctx, left, top) {
+        ctx.save();
+        const size = 8;
+        const stroke = "orange";
+        const fill = "orange";
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(left, top, size / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      },
     });
-
     return controls;
   }
 
@@ -95,43 +131,48 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
   modifyPolygon(
     index: number,
-    eventData: MouseEvent,
+    __: MouseEvent,
     transform: fabric.Transform,
     x: number,
     y: number
   ) {
     const polygon = transform.target as fabric.Polygon;
     const point = polygon.points[index];
-    const offsetX = x - (polygon.left + polygon.width / 2);
-    const offsetY = y - (polygon.top + polygon.height / 2);
+    const offsetX = x; //- polygon.left;
+    const offsetY = y; // - polygon.top;
 
     point.x = offsetX;
     point.y = offsetY;
 
     polygon.set({ dirty: true });
+
     this.canvas.requestRenderAll();
     return true;
   }
 
   render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
-    this.test.editable = true;
-    this.test.left =
-      this.left +
-      (this.aCoords.tr.x - this.aCoords.tl.x) / 2 -
-      this.test.width / 2;
+    this.test.left = this.left + (this.points[1].x * this.scaleX) / 2;
 
     this.test.top =
-      this.top +
-      (this.oCoords.ml.y - this.oCoords.tl.y) / 2 -
-      this.test.height / 2;
+      this.top + ((this.points[2].y - this.points[1].y) * this.scaleY) / 2;
+    this.test.originX = "center";
+    this.test.originY = "center";
+    this.test.selectable = true;
+    // this.test.width = 200;
 
-    // this.test.left = this.left;
-    // this.test.top = this.top;
-    // this.test.originX = "center";
-    // this.test.originY = "center";
-    console.log({ all: this });
-
+    if (this.test.width >= this.points[1].x * (this.scaleX - 0.6)) {
+      console.log("Exceeded");
+      this.scaleX = this.scaleX + 0.3;
+    }
+    if (
+      this.test.height >=
+      (this.points[2].y - this.points[1].y) * this.scaleY
+    ) {
+      console.log("Exceeded");
+      this.scaleY = this.scaleY + 0.3;
+    }
+    // this.test.width = this.width;
     if (!this.initialFocused) {
       this.makeEditable();
       this.initialFocused = true;
