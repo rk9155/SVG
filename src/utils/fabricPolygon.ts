@@ -75,17 +75,30 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const controls = {...this.controls};
 
     controls['p0'] = new fabric.Control({
-        x: this.points[0].x,
-        y: this.points[0].y,
+        x: 0.5,
+        y: 0.2,
         offsetX: 0,
         offsetY: 0,
         actionHandler: this.modifyPolygon.bind(this, 4),
         actionName: 'modifyPolygon',
         pointIndex: 4,
+        positionHandler: this.polygonPositionHandler.bind(this, 4)
       });
 
     return controls;
   }
+
+   polygonPositionHandler(index: number, dim, finalMatrix, fabricObject) {
+	  const x = (fabricObject.points[index].x - fabricObject.pathOffset.x);
+      const y = (fabricObject.points[index].y - fabricObject.pathOffset.y);
+		return fabric.util.transformPoint(
+			{ x: x, y: y },
+      fabric.util.multiplyTransformMatrices(
+        fabricObject.canvas.viewportTransform,
+        fabricObject.calcTransformMatrix()
+      )
+		);
+	}
 
   modifyPolygon(index: number, eventData: MouseEvent, transform: fabric.Transform, x: number, y: number) {
     const polygon = transform.target as fabric.Polygon;
