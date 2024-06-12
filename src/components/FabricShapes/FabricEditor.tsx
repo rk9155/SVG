@@ -64,17 +64,17 @@ const FabricEditor = () => {
         const points = [{
             x: 0, y: 0
         }, {
-            x: 200, y: 0
+            x: 100, y: 0
         }, {
-            x: 200, y: 100
+            x: 100, y: 50
         }, {
-            x: 100, y: 100
+            x: 50, y: 50
         }, {
-            x: 120, y: 200
+            x: 60, y: 70
         }, {
-            x: 150, y: 100
+            x: 70, y: 50
         },{
-            x: 0, y: 100
+            x: 0, y: 50
         }];
         const polygon = new GroupWithPolygon(points, {
             left: 100,

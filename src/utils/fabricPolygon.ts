@@ -138,15 +138,15 @@ export default class GroupWithPolygon extends fabric.Polygon {
   ) {
     const polygon = transform.target as fabric.Polygon;
     const point = polygon.points[index];
-    const offsetX = x; //- polygon.left;
-    const offsetY = y; // - polygon.top;
+    const offsetX = x - polygon.left;
+    const offsetY = y - polygon.top;
 
     point.x = offsetX;
     point.y = offsetY;
 
-    polygon.set({ dirty: true });
+    // polygon.set({ dirty: true });
 
-    this.canvas.requestRenderAll();
+    // this.canvas.requestRenderAll();
     return true;
   }
 
