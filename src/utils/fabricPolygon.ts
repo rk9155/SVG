@@ -21,6 +21,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
       fontSize: 18,
       objectCaching: false,
       textAlign: "center",
+      width: this.width,
+      height: this.height,
     });
 
     document.addEventListener("keyup", (event) => {
@@ -72,10 +74,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
       this.selectable = true;
     });
 
-    // this.on("scaling", () => {
-    //   this.test.width = this.points[0].x * this.scaleX;
-    //   this.test.height = (this.points[2].y - this.points[1].y) * this.scaleY;
-    // });
+    // Resize Textbox when Polygon is scaled
+    this.on("scaling", () => {
+      this.updateTextboxDimensions();
+    });
+
   }
 
   makeEditable = () => {
@@ -140,43 +143,67 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const point = polygon.points[index];
     const offsetX = x - polygon.left;
     const offsetY = y - polygon.top;
-
     point.x = offsetX;
     point.y = offsetY;
-
-    // polygon.set({ dirty: true });
-
-    // this.canvas.requestRenderAll();
+    this.updateTextboxDimensions();
     return true;
+  }
+
+  updateTextboxDimensions() {
+    const polygonWidth = (this.points[1].x - this.points[0].x) * this.scaleX;
+    const polygonHeight = (this.points[2].y - this.points[1].y) * this.scaleY;
+    this.test.set({
+      width: polygonWidth - 10,
+      height: polygonHeight - 10,
+    });
+
+    this.adjustPolygonToText();
+  }
+
+  adjustPolygonToText() {
+    const minWidth = 50;
+    const minHeight = 50;
+    const padding = 10;
+
+    const textWidth = this.test.width + padding;
+    const textHeight = this.test.height + padding;
+
+    const newWidth = Math.max(minWidth, textWidth);
+    const newHeight = Math.max(minHeight, textHeight);
+
+    const scaleX = newWidth / ((this.points[1].x - this.points[0].x) || 1);
+    const scaleY = newHeight / ((this.points[2].y - this.points[1].y) || 1);
+
+    this.set({
+      scaleX,
+      scaleY,
+    });
+
+    this.updateTextboxPosition();
+  }
+
+  updateTextboxPosition() {
+    this.test.set({
+      left: this.left + (this.points[1].x - this.points[0].x) * this.scaleX / 2,
+      top: this.top + (this.points[2].y - this.points[1].y) * this.scaleY / 2,
+    });
   }
 
   render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
-    this.test.left = this.left + (this.points[1].x * this.scaleX) / 2;
 
-    this.test.top =
-      this.top + ((this.points[2].y - this.points[1].y) * this.scaleY) / 2;
-    this.test.originX = "center";
-    this.test.originY = "center";
-    this.test.selectable = true;
-    // this.test.width = 200;
+    this.test.set({
+      originX: "center",
+      originY: "center",
+    });
 
-    if (this.test.width >= this.points[1].x * (this.scaleX - 0.6)) {
-      console.log("Exceeded");
-      this.scaleX = this.scaleX + 0.3;
-    }
-    if (
-      this.test.height >=
-      (this.points[2].y - this.points[1].y) * this.scaleY
-    ) {
-      console.log("Exceeded");
-      this.scaleY = this.scaleY + 0.3;
-    }
-    // this.test.width = this.width;
+    this.updateTextboxDimensions();
+
     if (!this.initialFocused) {
       this.makeEditable();
       this.initialFocused = true;
     }
+
     this.test.render(ctx);
   }
 }
