@@ -174,10 +174,17 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const scaleX = newWidth / ((this.points[1].x - this.points[0].x) || 1);
     const scaleY = newHeight / ((this.points[2].y - this.points[1].y) || 1);
 
-    this.set({
-      scaleX,
-      scaleY,
-    });
+    if(textWidth >(this.points[1].x - this.points[0].x) * this.scaleX){
+        this.set({
+          scaleX,
+        });
+    }
+
+    if(textHeight >(this.points[2].y - this.points[1].y) * this.scaleY) {
+        this.set({
+            scaleY
+        })
+    }
 
     this.updateTextboxPosition();
   }
