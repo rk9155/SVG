@@ -30,13 +30,13 @@ export const calloutPoints = (type: string) => {
                     x: 0, y: 0
                 },  
                 {
-                    x: 50, y: 0
+                    x: 70, y: 0
                 },
                 {
                     x: 60, y: -20
                 }, 
                 {
-                    x: 70, y: 0
+                    x: 50, y: 0
                 }, 
                 {
                     x: 100, y: 0
@@ -68,11 +68,11 @@ export const calloutPoints = (type: string) => {
                     x: 0, y: 50
                 },
                 {
-                    x: 0, y: 40
+                    x: 0, y: 20
                 }, {
                     x: -40, y: 30
                 }, {
-                    x: 0, y: 20
+                    x: 0, y: 40
                 } , {
                     x: 0, y: 0
                 }
@@ -89,11 +89,11 @@ export const calloutPoints = (type: string) => {
                 }, {
                     x: 100, y: 0
                 }, {
-                    x: 100, y: 20
+                    x: 100, y: 40
                 }, {
                     x: 120, y: 30
                 }, {
-                    x: 100, y: 40
+                    x: 100, y: 20
                 }, {
                     x: 100, y: 50
                 }, {
