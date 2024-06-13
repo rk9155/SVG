@@ -55,7 +55,9 @@ export default class GroupWithPolygon extends fabric.Polygon {
     });
 
     this.on("removed", () => {
-      this.canvas.remove(this.test);
+        if(this.canvas){
+            this.canvas.remove(this.test);
+        }
     });
 
     this.on("mousedown:before", () => {

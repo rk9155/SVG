@@ -51,7 +51,7 @@ export const calloutPoints = (type: string) => {
                     x: 0, y: 0
                 }
             ],
-                pointIndex: 4,
+                pointIndex: 2,
                 widthPointer: {x1: 0, x2: 4},
                 heightPointer: {y1: 4, y2: 5}
             };
