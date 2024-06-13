@@ -12,27 +12,80 @@ export default class GroupWithPolygon extends fabric.Polygon {
   _prevAngle = 0;
   canvas = new fabric.Canvas("c");
   initialFocused = false;
+  selected = false;
 
   constructor(...args: any) {
     super(...args);
-    this.test = new Textbox("Sample", {
+    this.test = new Textbox("", {
       fill: "#d9d9d9",
-      fontSize: 24,
+      fontSize: 18,
       objectCaching: false,
+      textAlign: "center",
+      width: this.width,
+      height: this.height,
     });
+
+    document.addEventListener("keydown", (event) => {
+      if (!this.selected) {
+        return;
+      }
+      switch (event.key) {
+        case "ArrowDown":
+          this.set({
+            top: this.top + (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowUp":
+          this.set({
+            top: this.top - (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowLeft":
+          this.set({
+            left: this.left - (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowRight":
+          this.set({
+            left: this.left + (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "Backspace":
+          if (this.canvas) {
+            this.canvas.remove(this.test);
+            this.canvas.remove(this);
+          }
+          break;
+        case "Shift":
+          break;
+        default:
+          this.makeEditable();
+          this.selected = false;
+          break;
+      }
+    });
+
     this.canvas = args.canvas;
 
-    this.cornerColor = "blue";
+    this.cornerColor = "white";
     this.cornerStyle = "circle";
+    this.cornerStrokeColor = "black";
+    this.cornerSize = 8;
+    this.hasBorders = false;
     this.controls = this.createPathControls();
-    console.log("controls", this.controls);
 
     this.on("added", () => {
       this.canvas.add(this.test);
     });
 
     this.on("removed", () => {
-      this.canvas.remove(this.test);
+      if (this.canvas) {
+        this.canvas.remove(this.test);
+      }
     });
 
     this.on("mousedown:before", () => {
@@ -46,6 +99,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
     this.on("deselected", () => {
       this.canvas.preserveObjectStacking = this._prevObjectStacking;
+      this.selected = false;
+    });
+
+    this.on("selected", () => {
+      this.selected = true;
     });
 
     this.test.on("editing:exited", () => {
@@ -53,13 +111,20 @@ export default class GroupWithPolygon extends fabric.Polygon {
       this.test.evented = false;
       this.selectable = true;
     });
+
+    // Resize Textbox when Polygon is scaled
+    this.on("scaling", () => {
+      this.updateTextboxDimensions();
+    });
   }
 
   makeEditable = () => {
     this.test.selectable = true;
     this.test.evented = true;
     this.test.editable = true;
-    this.canvas.setActiveObject(this.test);
+    if (this.canvas) {
+      this.canvas.setActiveObject(this.test);
+    }
     this.test.enterEditing();
     this.selectable = false;
   };
@@ -67,6 +132,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
   createPathControls() {
     const controls = { ...this.controls };
 
+    delete controls["mtr"];
     controls["p0"] = new fabric.Control({
       x: 0.5,
       y: 0.2,
@@ -76,8 +142,21 @@ export default class GroupWithPolygon extends fabric.Polygon {
       actionName: "modifyPolygon",
       pointIndex: 4,
       positionHandler: this.polygonPositionHandler.bind(this, 4),
+      render: function (ctx, left, top) {
+        ctx.save();
+        const size = 8;
+        const stroke = "orange";
+        const fill = "orange";
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(left, top, size / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      },
     });
-
     return controls;
   }
 
@@ -95,47 +174,93 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
   modifyPolygon(
     index: number,
-    eventData: MouseEvent,
+    __: MouseEvent,
     transform: fabric.Transform,
     x: number,
     y: number
   ) {
     const polygon = transform.target as fabric.Polygon;
     const point = polygon.points[index];
-    const offsetX = x - (polygon.left + polygon.width / 2);
-    const offsetY = y - (polygon.top + polygon.height / 2);
 
+    // Get the scaling factors
+    const scaleX = polygon.scaleX || 1;
+    const scaleY = polygon.scaleY || 1;
+
+    // Calculate the adjusted coordinates
+    const offsetX = (x - polygon.left) / scaleX;
+    const offsetY = (y - polygon.top) / scaleY;
+
+    // Update the point coordinates
     point.x = offsetX;
     point.y = offsetY;
+    this.updateTextboxDimensions();
 
-    polygon.set({ dirty: true });
-    this.canvas.requestRenderAll();
     return true;
+  }
+
+  updateTextboxDimensions() {
+    const polygonWidth = (this.points[1].x - this.points[0].x) * this.scaleX;
+    const polygonHeight = (this.points[2].y - this.points[1].y) * this.scaleY;
+    this.test.set({
+      width: polygonWidth - 10,
+      height: polygonHeight - 10,
+    });
+
+    this.adjustPolygonToText();
+  }
+
+  adjustPolygonToText() {
+    const minWidth = 50;
+    const minHeight = 50;
+    const padding = 10;
+
+    const textWidth = this.test.width + padding;
+    const textHeight = this.test.height + padding;
+
+    const newWidth = Math.max(minWidth, textWidth);
+    const newHeight = Math.max(minHeight, textHeight);
+
+    const scaleX = newWidth / (this.points[1].x - this.points[0].x || 1);
+    const scaleY = newHeight / (this.points[2].y - this.points[1].y || 1);
+
+    if (textWidth > (this.points[1].x - this.points[0].x) * this.scaleX) {
+      this.set({
+        scaleX,
+      });
+    }
+
+    if (textHeight > (this.points[2].y - this.points[1].y) * this.scaleY) {
+      this.set({
+        scaleY,
+      });
+    }
+
+    this.updateTextboxPosition();
+  }
+
+  updateTextboxPosition() {
+    this.test.set({
+      left:
+        this.left + ((this.points[1].x - this.points[0].x) * this.scaleX) / 2,
+      top: this.top + ((this.points[2].y - this.points[1].y) * this.scaleY) / 2,
+    });
   }
 
   render(ctx: CanvasRenderingContext2D) {
     super.render(ctx);
-    this.test.editable = true;
-    this.test.left =
-      this.left +
-      (this.aCoords.tr.x - this.aCoords.tl.x) / 2 -
-      this.test.width / 2;
 
-    this.test.top =
-      this.top +
-      (this.oCoords.ml.y - this.oCoords.tl.y) / 2 -
-      this.test.height / 2;
+    this.test.set({
+      originX: "center",
+      originY: "center",
+    });
 
-    // this.test.left = this.left;
-    // this.test.top = this.top;
-    // this.test.originX = "center";
-    // this.test.originY = "center";
-    console.log({ all: this });
+    this.updateTextboxDimensions();
 
     if (!this.initialFocused) {
       this.makeEditable();
       this.initialFocused = true;
     }
+
     this.test.render(ctx);
   }
 }

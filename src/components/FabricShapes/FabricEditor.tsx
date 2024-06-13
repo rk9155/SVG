@@ -66,41 +66,42 @@ const FabricEditor = () => {
     // })
     // fabricCanvas.current.add(rectWithText);
 
-    const points = [
+    const pointBottom = [
       {
         x: 0,
         y: 0,
-      },
-      {
-        x: 200,
-        y: 0,
-      },
-      {
-        x: 200,
-        y: 100,
       },
       {
         x: 100,
-        y: 100,
+        y: 0,
       },
       {
-        x: 120,
-        y: 200,
+        x: 100,
+        y: 50,
       },
       {
-        x: 150,
-        y: 100,
+        x: 50,
+        y: 50,
+      },
+      {
+        x: 60,
+        y: 70,
+      },
+      {
+        x: 70,
+        y: 50,
       },
       {
         x: 0,
-        y: 100,
+        y: 50,
       },
     ];
+
     const polygon = new GroupWithPolygon(
-      points,
+      pointBottom,
       {
-        left: 0,
-        top: 0,
+        left: 100,
+        top: 50,
         fill: "#D81B60",
         scaleX: 1,
         scaleY: 1,
@@ -139,6 +140,26 @@ const FabricEditor = () => {
       >
         <button onClick={handleAddRectangle}>Rectangle</button>
         <button onClick={handleAddText}>Text</button>
+        <button
+          onClick={() => {
+            const objects = fabricCanvas.current.getObjects();
+            objects[1].set({ fontSize: objects[1].fontSize + 2 });
+            fabricCanvas.current.renderAll();
+          }}
+        >
+          +
+        </button>
+        <button
+          onClick={() => {
+            const objects = fabricCanvas.current.getObjects();
+            objects[1].set({
+              fontSize: objects[1].fontSize - 2,
+            });
+            fabricCanvas.current.renderAll();
+          }}
+        >
+          -
+        </button>
       </div>
       <canvas id="canvas-div" />
     </div>
