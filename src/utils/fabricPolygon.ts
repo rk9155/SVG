@@ -14,6 +14,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
   initialFocused = false;
   selected = false;
   pointIndex=0;
+  widthPointer={x1: 0, x2: 1};
+  heightPointer={y1: 1, y2: 2};
 
   constructor(...args: any) {
     super(...args);
@@ -29,6 +31,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
     this.canvas = args[2];
     this.pointIndex = args[3];
+    this.widthPointer = args[4];
+    this.heightPointer = args[5];
 
     this.cornerColor = "blue";
     this.cornerStyle = "circle";
@@ -162,8 +166,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
   }
 
   updateTextboxDimensions() {
-    const polygonWidth = (this.points[1].x - this.points[0].x) * this.scaleX;
-    const polygonHeight = (this.points[6].y - this.points[0].y) * this.scaleY;
+    const polygonWidth = (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX;
+    const polygonHeight = (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY;
     this.test.set({
       width: polygonWidth - 10,
       height: polygonHeight - 10,
@@ -183,16 +187,16 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const newWidth = Math.max(minWidth, textWidth);
     const newHeight = Math.max(minHeight, textHeight);
 
-    const scaleX = newWidth / ((this.points[1].x - this.points[0].x) || 1);
-    const scaleY = newHeight / ((this.points[6].y - this.points[0].y) || 1);
+    const scaleX = newWidth / ((this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) || 1);
+    const scaleY = newHeight / ((this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) || 1);
 
-    if(textWidth >(this.points[1].x - this.points[0].x) * this.scaleX){
+    if(textWidth >(this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX){
         this.set({
           scaleX,
         });
     }
 
-    if(textHeight >(this.points[6].y - this.points[0].y) * this.scaleY) {
+    if(textHeight >(this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY) {
         this.set({
             scaleY
         })
@@ -203,8 +207,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
   updateTextboxPosition() {
     this.test.set({
-      left: this.left + (this.points[1].x - this.points[0].x) * this.scaleX / 2,
-      top: this.top + (this.points[6].y - this.points[0].y) * this.scaleY / 2,
+      left: this.left + (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX / 2,
+      top: this.top + (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY / 2,
     });
   }
 
