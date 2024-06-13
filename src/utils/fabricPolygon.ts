@@ -13,6 +13,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
   canvas = new fabric.Canvas("c");
   initialFocused = false;
   selected = false;
+  pointIndex=0;
 
   constructor(...args: any) {
     super(...args);
@@ -23,7 +24,16 @@ export default class GroupWithPolygon extends fabric.Polygon {
       textAlign: "center",
       width: this.width,
       height: this.height,
+      hasBorders: false,
     });
+
+    this.canvas = args[2];
+    this.pointIndex = args[3];
+
+    this.cornerColor = "blue";
+    this.cornerStyle = "circle";
+    this.controls = this.createPathControls();
+    console.log("controls", this.controls);
 
     document.addEventListener("keyup", (event) => {
       if (event && this.selected) {
@@ -35,12 +45,6 @@ export default class GroupWithPolygon extends fabric.Polygon {
     this.test.on("selected", () => {
       console.log("text added");
     });
-    this.canvas = args.canvas;
-
-    this.cornerColor = "blue";
-    this.cornerStyle = "circle";
-    this.controls = this.createPathControls();
-    console.log("controls", this.controls);
 
     this.on("added", () => {
       this.canvas.add(this.test);
@@ -98,9 +102,9 @@ export default class GroupWithPolygon extends fabric.Polygon {
       y: 0.2,
       offsetX: 0,
       offsetY: 0,
-      actionHandler: this.modifyPolygon.bind(this, 4),
+      actionHandler: this.modifyPolygon.bind(this, this.pointIndex),
       actionName: "modifyPolygon",
-      pointIndex: 4,
+      pointIndex: this.pointIndex,
       positionHandler: this.polygonPositionHandler.bind(this, 4),
       render: function (ctx, left, top) {
         ctx.save();
@@ -121,8 +125,8 @@ export default class GroupWithPolygon extends fabric.Polygon {
   }
 
   polygonPositionHandler(index: number, dim, finalMatrix, fabricObject) {
-    const x = fabricObject.points[index].x - fabricObject.pathOffset.x;
-    const y = fabricObject.points[index].y - fabricObject.pathOffset.y;
+    const x = fabricObject.points[this.pointIndex].x - fabricObject.pathOffset.x;
+    const y = fabricObject.points[this.pointIndex].y - fabricObject.pathOffset.y;
     return fabric.util.transformPoint(
       { x: x, y: y },
       fabric.util.multiplyTransformMatrices(
@@ -132,7 +136,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
     );
   }
 
-  modifyPolygon(
+   modifyPolygon(
     index: number,
     __: MouseEvent,
     transform: fabric.Transform,
@@ -141,8 +145,16 @@ export default class GroupWithPolygon extends fabric.Polygon {
   ) {
     const polygon = transform.target as fabric.Polygon;
     const point = polygon.points[index];
-    const offsetX = x - polygon.left;
-    const offsetY = y - polygon.top;
+
+    // Get the scaling factors
+    const scaleX = polygon.scaleX || 1;
+    const scaleY = polygon.scaleY || 1;
+
+    // Calculate the adjusted coordinates
+    const offsetX = (x - polygon.left) / scaleX;
+    const offsetY = (y - polygon.top) / scaleY;
+
+    // Update the point coordinates
     point.x = offsetX;
     point.y = offsetY;
     this.updateTextboxDimensions();
@@ -151,7 +163,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
 
   updateTextboxDimensions() {
     const polygonWidth = (this.points[1].x - this.points[0].x) * this.scaleX;
-    const polygonHeight = (this.points[2].y - this.points[1].y) * this.scaleY;
+    const polygonHeight = (this.points[6].y - this.points[0].y) * this.scaleY;
     this.test.set({
       width: polygonWidth - 10,
       height: polygonHeight - 10,
@@ -172,7 +184,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const newHeight = Math.max(minHeight, textHeight);
 
     const scaleX = newWidth / ((this.points[1].x - this.points[0].x) || 1);
-    const scaleY = newHeight / ((this.points[2].y - this.points[1].y) || 1);
+    const scaleY = newHeight / ((this.points[6].y - this.points[0].y) || 1);
 
     if(textWidth >(this.points[1].x - this.points[0].x) * this.scaleX){
         this.set({
@@ -180,7 +192,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
         });
     }
 
-    if(textHeight >(this.points[2].y - this.points[1].y) * this.scaleY) {
+    if(textHeight >(this.points[6].y - this.points[0].y) * this.scaleY) {
         this.set({
             scaleY
         })
@@ -192,7 +204,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
   updateTextboxPosition() {
     this.test.set({
       left: this.left + (this.points[1].x - this.points[0].x) * this.scaleX / 2,
-      top: this.top + (this.points[2].y - this.points[1].y) * this.scaleY / 2,
+      top: this.top + (this.points[6].y - this.points[0].y) * this.scaleY / 2,
     });
   }
 

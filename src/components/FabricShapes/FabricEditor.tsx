@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as fabric from "fabric";
 import { useEffect, useRef } from "react";
+import { calloutPoints } from "../../utils/calloutPoints";
 import GroupWithPolygon from "../../utils/fabricPolygon";
 
 
 const FabricEditor = () => {
     const fabricCanvas = useRef<fabric.Canvas>() as React.MutableRefObject<fabric.Canvas>;
-
     useEffect(()=> {
         const canvasDiv = document.getElementById('canvas-div') as HTMLCanvasElement;
         if(canvasDiv){
@@ -42,41 +42,10 @@ const FabricEditor = () => {
         fabricCanvas.current.renderAll();
     }
 
-     const handleAddText = () => {
-        // const rectWithText = new GroupWithText({
-        //     width: 200,
-        //     height: 100,
-        //     strokeWidth: 4,
-        //     fill: '#000',
-        //     stroke: '#000', 
-        //     lockRotation: true,
-		// 	objectCaching: true,
-		// 	noScaleCache: true,
-		// 	strokeUniform: true,
-		// 	transparentCorners: false,
-		// 	cornerColor: '#000',
-		// 	cornerStyle: 'circle',
-		// 	cornerSize: 8,
-		// 	cornerStrokeColor: '#1d7bb9',
-        // })
-        // fabricCanvas.current.add(rectWithText);
-
-        const points = [{
-            x: 0, y: 0
-        }, {
-            x: 100, y: 0
-        }, {
-            x: 100, y: 50
-        }, {
-            x: 50, y: 50
-        }, {
-            x: 60, y: 70
-        }, {
-            x: 70, y: 50
-        },{
-            x: 0, y: 50
-        }];
-        const polygon = new GroupWithPolygon(points, {
+     const handleAddText = (type: string) => {
+        const points = calloutPoints(type);
+        if (points.points.length === 0) return;
+        const polygon = new GroupWithPolygon(points?.points, {
             left: 100,
             top: 50,
             fill: '#D81B60',
@@ -86,7 +55,8 @@ const FabricEditor = () => {
             objectCaching: false,
             transparentCorners: false,
             cornerColor: 'blue',
-        }, fabricCanvas.current);
+        }, fabricCanvas.current, points?.pointIndex);
+       fabricCanvas.current.clear();
        fabricCanvas.current.add(polygon);
        fabricCanvas.current.renderAll();
     }
@@ -96,7 +66,10 @@ const FabricEditor = () => {
     <div>FabricEditor</div>
     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '800px', padding: '10px', gap: '20px'}}>
         <button onClick={handleAddRectangle}>Rectangle</button>
-        <button onClick={handleAddText}>Text</button>
+        <button onClick={()=> handleAddText('bottom')}>Callout bottom</button>
+        <button onClick={()=> handleAddText('top')}>Callout top</button>
+        <button onClick={()=> handleAddText('left')}>Callout left</button>
+        <button onClick={()=> handleAddText('right')}>Callout right</button>
     </div>
     <canvas id='canvas-div'/>
    </div>
