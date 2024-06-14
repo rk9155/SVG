@@ -90,6 +90,50 @@ export default class GroupWithPolygon extends fabric.Polygon {
       this.updateTextboxDimensions();
     });
 
+     document.addEventListener("keydown", (event) => {
+      if (!this.selected) {
+        return;
+      }
+      switch (event.key) {
+        case "ArrowDown":
+          this.set({
+            top: this.top + (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowUp":
+          this.set({
+            top: this.top - (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowLeft":
+          this.set({
+            left: this.left - (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "ArrowRight":
+          this.set({
+            left: this.left + (event.shiftKey ? 10 : 1),
+          });
+          this.canvas.renderAll();
+          break;
+        case "Backspace":
+          if (this.canvas) {
+            this.canvas.remove(this.test);
+            this.canvas.remove(this);
+          }
+          break;
+        case "Shift":
+          break;
+        default:
+          this.makeEditable();
+          this.selected = false;
+          break;
+      }
+    });
+
   }
 
   makeEditable = () => {
