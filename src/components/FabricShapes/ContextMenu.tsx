@@ -8,7 +8,12 @@ import {
 } from "antd";
 import * as fabric from "fabric";
 import { Color } from "antd/es/color-picker";
-import { BoldOutlined, ItalicOutlined } from "@ant-design/icons";
+import {
+  BgColorsOutlined,
+  BoldOutlined,
+  FontColorsOutlined,
+  ItalicOutlined,
+} from "@ant-design/icons";
 
 interface ContextMenuProps {
   visible: boolean;
@@ -106,9 +111,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         <Tooltip title="Background Color">
           <ColorPicker
             onChange={handleBackgroundColorChange}
-            size="small"
+            size="middle"
             defaultValue={"#fff"}
-          />
+          >
+            <Button size="small" icon={<BgColorsOutlined />} />
+          </ColorPicker>
         </Tooltip>
         <Tooltip title="Border Color">
           <ColorPicker
@@ -142,7 +149,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             onChange={handleFontColorChange}
             size="small"
             defaultValue={"#fff"}
-          />
+          >
+            <Button size="small" icon={<FontColorsOutlined />} />
+          </ColorPicker>
         </Tooltip>
       </div>
     </div>
