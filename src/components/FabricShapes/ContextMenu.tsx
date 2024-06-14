@@ -32,7 +32,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   if (!visible) return null;
 
   const handleBackgroundColorChange = (__: Color, val: string) => {
-    const currentObject = fabricCanvas.current.getActiveObjects();
+    const currentObject = fabricCanvas.current.getObjects();
     if (currentObject) {
       currentObject[0].set({ fill: val });
       fabricCanvas.current.renderAll();
@@ -113,6 +113,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             onChange={handleBackgroundColorChange}
             size="middle"
             defaultValue={"#fff"}
+            placement="bottomLeft"
           >
             <Button size="small" icon={<BgColorsOutlined />} />
           </ColorPicker>
@@ -122,6 +123,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             onChange={handleBorderColorChange}
             size="small"
             defaultValue={"#D81B60"}
+            placement="bottomLeft"
           />
         </Tooltip>
         <Tooltip title="Font Size">
@@ -149,6 +151,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             onChange={handleFontColorChange}
             size="small"
             defaultValue={"#fff"}
+            placement="bottomLeft"
           >
             <Button size="small" icon={<FontColorsOutlined />} />
           </ColorPicker>
