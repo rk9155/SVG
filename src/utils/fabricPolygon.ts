@@ -13,10 +13,10 @@ export default class GroupWithPolygon extends fabric.Polygon {
   canvas = new fabric.Canvas("c");
   initialFocused = false;
   selected = false;
-  pointIndex=0;
-  widthPointer={x1: 0, x2: 1};
-  heightPointer={y1: 1, y2: 2};
-  arrowType= 'bottom';
+  pointIndex = 0;
+  widthPointer = { x1: 0, x2: 1 };
+  heightPointer = { y1: 1, y2: 2 };
+  arrowType = "bottom";
 
   constructor(...args: any) {
     super(...args);
@@ -36,8 +36,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
     this.heightPointer = args[5];
     this.arrowType = args[6];
 
-    this.cornerColor = "blue";
+    this.cornerColor = "white";
     this.cornerStyle = "circle";
+    this.cornerStrokeColor = "black";
+    this.cornerSize = 8;
+    this.hasBorders = false;
     this.controls = this.createPathControls();
 
     document.addEventListener("keyup", (event) => {
@@ -47,18 +50,18 @@ export default class GroupWithPolygon extends fabric.Polygon {
       }
     });
 
-    this.test.on('mousedown', ()=> {
-        this.canvas.setActiveObject(this);
-    })
+    this.test.on("mousedown", () => {
+      this.canvas.setActiveObject(this);
+    });
 
     this.on("added", () => {
       this.canvas.add(this.test);
     });
 
     this.on("removed", () => {
-        if(this.canvas){
-            this.canvas.remove(this.test);
-        }
+      if (this.canvas) {
+        this.canvas.remove(this.test);
+      }
     });
 
     this.on("mousedown:before", () => {
@@ -90,7 +93,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
       this.updateTextboxDimensions();
     });
 
-     document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", (event) => {
       if (!this.selected) {
         return;
       }
@@ -133,7 +136,6 @@ export default class GroupWithPolygon extends fabric.Polygon {
           break;
       }
     });
-
   }
 
   makeEditable = () => {
@@ -176,8 +178,10 @@ export default class GroupWithPolygon extends fabric.Polygon {
   }
 
   polygonPositionHandler(index: number, dim, finalMatrix, fabricObject) {
-    const x = fabricObject.points[this.pointIndex].x - fabricObject.pathOffset.x;
-    const y = fabricObject.points[this.pointIndex].y - fabricObject.pathOffset.y;
+    const x =
+      fabricObject.points[this.pointIndex].x - fabricObject.pathOffset.x;
+    const y =
+      fabricObject.points[this.pointIndex].y - fabricObject.pathOffset.y;
     return fabric.util.transformPoint(
       { x: x, y: y },
       fabric.util.multiplyTransformMatrices(
@@ -187,7 +191,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
     );
   }
 
-   modifyPolygon(
+  modifyPolygon(
     index: number,
     __: MouseEvent,
     transform: fabric.Transform,
@@ -213,8 +217,14 @@ export default class GroupWithPolygon extends fabric.Polygon {
   }
 
   updateTextboxDimensions() {
-    const polygonWidth = (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX;
-    const polygonHeight = (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY;
+    const polygonWidth =
+      (this.points[this.widthPointer.x2].x -
+        this.points[this.widthPointer.x1].x) *
+      this.scaleX;
+    const polygonHeight =
+      (this.points[this.heightPointer.y2].y -
+        this.points[this.heightPointer.y1].y) *
+      this.scaleY;
     this.test.set({
       width: polygonWidth - 10,
       height: polygonHeight - 10,
@@ -234,30 +244,60 @@ export default class GroupWithPolygon extends fabric.Polygon {
     const newWidth = Math.max(minWidth, textWidth);
     const newHeight = Math.max(minHeight, textHeight);
 
-    const scaleX = newWidth / ((this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) || 1);
-    const scaleY = newHeight / ((this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) || 1);
+    const scaleX =
+      newWidth /
+      (this.points[this.widthPointer.x2].x -
+        this.points[this.widthPointer.x1].x || 1);
+    const scaleY =
+      newHeight /
+      (this.points[this.heightPointer.y2].y -
+        this.points[this.heightPointer.y1].y || 1);
 
-    if(textWidth >(this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX){
-        this.set({
-          scaleX,
-        });
+    if (
+      textWidth >
+      (this.points[this.widthPointer.x2].x -
+        this.points[this.widthPointer.x1].x) *
+        this.scaleX
+    ) {
+      this.set({
+        scaleX,
+      });
     }
 
-    if(textHeight >(this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY) {
-        this.set({
-            scaleY
-        })
+    if (
+      textHeight >
+      (this.points[this.heightPointer.y2].y -
+        this.points[this.heightPointer.y1].y) *
+        this.scaleY
+    ) {
+      this.set({
+        scaleY,
+      });
     }
 
     this.updateTextboxPosition();
   }
 
   updateTextboxPosition() {
-    const extraTop = this.arrowType === 'top' ? this.points[this.pointIndex].y : 0;
-    const extraLeft = this.arrowType === 'left' ? this.points[this.pointIndex].x : 0;
+    const extraTop =
+      this.arrowType === "top" ? this.points[this.pointIndex].y : 0;
+    const extraLeft =
+      this.arrowType === "left" ? this.points[this.pointIndex].x : 0;
     this.test.set({
-      left: this.left + (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX / 2 - extraLeft*this.scaleX,
-      top: this.top + (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY / 2 - extraTop*this.scaleY,
+      left:
+        this.left +
+        ((this.points[this.widthPointer.x2].x -
+          this.points[this.widthPointer.x1].x) *
+          this.scaleX) /
+          2 -
+        extraLeft * this.scaleX,
+      top:
+        this.top +
+        ((this.points[this.heightPointer.y2].y -
+          this.points[this.heightPointer.y1].y) *
+          this.scaleY) /
+          2 -
+        extraTop * this.scaleY,
     });
   }
 
