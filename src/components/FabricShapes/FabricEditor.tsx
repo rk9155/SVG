@@ -57,7 +57,7 @@ const FabricEditor = () => {
             cornerColor: 'blue',
             // strokeWidth: 2,
             // stroke: 'green',
-        }, fabricCanvas.current, points?.pointIndex, points.widthPointer, points.heightPointer);
+        }, fabricCanvas.current, points?.pointIndex, points.widthPointer, points.heightPointer, points.type);
        fabricCanvas.current.clear();
        fabricCanvas.current.add(polygon);
        fabricCanvas.current.renderAll();

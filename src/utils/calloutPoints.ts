@@ -21,7 +21,8 @@ export const calloutPoints = (type: string) => {
                 }], 
                 pointIndex: 4,
                 widthPointer: {x1: 0, x2: 1},
-                heightPointer: {y1: 1, y2: 2}
+                heightPointer: {y1: 1, y2: 2},
+                type: 'bottom'
             };
             break;
         case 'top':
@@ -53,7 +54,8 @@ export const calloutPoints = (type: string) => {
             ],
                 pointIndex: 2,
                 widthPointer: {x1: 0, x2: 4},
-                heightPointer: {y1: 4, y2: 5}
+                heightPointer: {y1: 4, y2: 5},
+                type: 'top'
             };
             break;
         case 'left':
@@ -79,7 +81,8 @@ export const calloutPoints = (type: string) => {
                ],
                 pointIndex: 5,
                 widthPointer: {x1: 0, x2: 1},
-                heightPointer: {y1: 1, y2: 2}
+                heightPointer: {y1: 1, y2: 2},
+                type: 'left'
             };
             break;
         case 'right': 
@@ -102,7 +105,8 @@ export const calloutPoints = (type: string) => {
                ],
                pointIndex: 3,
                widthPointer: {x1: 0, x2: 1},
-               heightPointer: {y1: 0, y2: 6}
+               heightPointer: {y1: 0, y2: 6},
+               type: 'right'
             };
             break;
         default:

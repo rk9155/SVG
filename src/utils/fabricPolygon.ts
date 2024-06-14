@@ -16,6 +16,7 @@ export default class GroupWithPolygon extends fabric.Polygon {
   pointIndex=0;
   widthPointer={x1: 0, x2: 1};
   heightPointer={y1: 1, y2: 2};
+  arrowType= 'bottom';
 
   constructor(...args: any) {
     super(...args);
@@ -33,11 +34,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
     this.pointIndex = args[3];
     this.widthPointer = args[4];
     this.heightPointer = args[5];
+    this.arrowType = args[6];
 
     this.cornerColor = "blue";
     this.cornerStyle = "circle";
     this.controls = this.createPathControls();
-    console.log("controls", this.controls);
 
     document.addEventListener("keyup", (event) => {
       if (event && this.selected) {
@@ -46,9 +47,9 @@ export default class GroupWithPolygon extends fabric.Polygon {
       }
     });
 
-    this.test.on("selected", () => {
-      console.log("text added");
-    });
+    this.test.on('mousedown', ()=> {
+        this.canvas.setActiveObject(this);
+    })
 
     this.on("added", () => {
       this.canvas.add(this.test);
@@ -208,9 +209,11 @@ export default class GroupWithPolygon extends fabric.Polygon {
   }
 
   updateTextboxPosition() {
+    const extraTop = this.arrowType === 'top' ? this.points[this.pointIndex].y : 0;
+    const extraLeft = this.arrowType === 'left' ? this.points[this.pointIndex].x : 0;
     this.test.set({
-      left: this.left + (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX / 2,
-      top: this.top + (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY / 2,
+      left: this.left + (this.points[this.widthPointer.x2].x - this.points[this.widthPointer.x1].x) * this.scaleX / 2 - extraLeft*this.scaleX,
+      top: this.top + (this.points[this.heightPointer.y2].y - this.points[this.heightPointer.y1].y) * this.scaleY / 2 - extraTop*this.scaleY,
     });
   }
 
