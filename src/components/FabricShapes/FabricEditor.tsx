@@ -128,21 +128,6 @@ const FabricEditor = () => {
     }
   };
 
-  const handleSaveImage = () => {
-    if (fabricCanvas.current) {
-      fabricCanvas.current.renderAll();
-      const dataURL = fabricCanvas.current.toDataURL({
-        format: "png",
-        quality: 1,
-        multiplier: 1,
-      });
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "canvas-image.png";
-      link.click();
-    }
-  };
-
   return (
     <Row>
       <Col flex={4} style={{ background: "rgba(0,0,0,0.2", padding: "10px" }}>
@@ -157,7 +142,6 @@ const FabricEditor = () => {
       </Col>
       <Col flex={1} style={{ padding: "10px" }}>
         <ActionPanel fabricCanvas={fabricCanvas} />
-        <Button onClick={handleSaveImage}>Save Image</Button>
       </Col>
     </Row>
   );
